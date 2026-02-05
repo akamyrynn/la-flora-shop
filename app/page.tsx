@@ -5,7 +5,25 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import ProductCard from '@/components/ProductCard';
 import type { Product } from '@/lib/types';
-import { ChevronRight, Flower2, Calendar, Users, Palette, Ruler } from 'lucide-react';
+import {
+  ChevronRight,
+  ChevronDown,
+  Flower2,
+  Calendar,
+  Users,
+  Palette,
+  Ruler,
+  Truck,
+  Shield,
+  Gift,
+  CreditCard,
+  Camera,
+  Heart,
+  Star,
+  Clock,
+  MapPin,
+  Phone
+} from 'lucide-react';
 
 // Мультиуровневое меню цветов
 const FLOWER_MENU = {
@@ -81,40 +99,166 @@ const FLOWER_MENU = {
   },
 };
 
+// FAQ данные
+const FAQ_DATA = [
+  {
+    question: 'Можно оформить заказ с доставкой на сегодня?',
+    answer: 'В интернет-магазине La Flora вы можете купить цветы с быстрой доставкой по Москве в день заказа с 10:00 до 23:00. Привезем заказ в течение 1–2 часов. Крайнее время предзаказа на сегодня доступно до 19:00. Заказы, оформленные после 19:00, доставляются на следующий день с 10 утра. Если нужна срочная доставка букета или подарка к точному часу, такая услуга предоставляется по согласованию и рассчитывается в зависимости от адреса получателя.',
+  },
+  {
+    question: 'Как оформить заказ, если адрес и время доставки неизвестны?',
+    answer: 'В этом случае наша служба доставки свяжется с получателем, чтобы уточнить удобные время и место для вручения подарка. После согласования условий мы отправим вам сообщение с информацией о времени в день доставки в СМС и на email. Информация об адресе получателя не подлежит разглашению, поэтому она будет скрыта в заказе.',
+  },
+  {
+    question: 'Даете ли вы гарантии?',
+    answer: 'Каждый заказ застрахован на 100%. Состав и оформление гарантированы и соблюдаются в точности как это представлено в описании и на фотографиях товара. Помимо этого, каждый клиент защищён благодаря нашему особому контролю качества и клиентскому сервису. Фото по собранному заказу обязательно будут отправлены вам в СМС и на Email. Если же цветы проявят признаки увядания в течение 48 часов, обязательно пришлите фотографии нам в чат или на hello@laflora.ru и мы оперативно заменим букет или компенсируем стоимость.',
+  },
+  {
+    question: 'Предоставляете ли вы скидки?',
+    answer: 'После каждой покупки вы получаете бонусные баллы, которые можно использовать для оплаты нового заказа - до 100% его стоимости. Также мы начисляем баллы за участие в программе качества: отзывы о цветах и нашей работе, а также предложения по улучшению сервиса. Как получить дополнительные баллы, вам подскажут наши менеджеры.',
+  },
+  {
+    question: 'Что вы делаете, если получателя нет на месте?',
+    answer: 'В данной ситуации мы предложим вам возможные варианты: доставку в другое время или день, отправку цветов по другому адресу, либо отмену заказа с возвратом части средств. В любом случае после оформления заказ будет либо доставлен, либо отменён - по вашему желанию.',
+  },
+  {
+    question: 'Сколько стоит доставка букета по адресу?',
+    answer: 'Стоимость доставки по Москве внутри МКАД недорогая, составляет 290 руб. В остальных случаях, стоимость услуги рассчитывается автоматически по адресу получателя.',
+  },
+  {
+    question: 'Доставляете ли вы цветы на дом по Москве?',
+    answer: 'Да, основное назначение сервиса La Flora это как раз оказание услуги доставки цветочных композиций на дом адресату или заказчику. Вы всегда можете рассчитывать на безупречный курьерский сервис до самой двери. Все букеты тщательно защищены транспортировочной упаковкой и имеют подпитку до момента вручения получателя.',
+  },
+];
+
+// Отзывы
+const REVIEWS_DATA = [
+  {
+    name: 'Анна Петрова',
+    date: '2 дня назад',
+    text: 'Потрясающие букеты! Заказывала розы на день рождения мамы, всё было идеально. Свежие цветы, красивая упаковка, доставили точно в срок. Очень довольна!',
+    rating: 5,
+    product: 'Букет "Нежность"',
+  },
+  {
+    name: 'Дмитрий Козлов',
+    date: '5 дней назад',
+    text: 'Быстрая доставка, вежливый курьер. Букет превзошел все ожидания! Жена была в восторге от пионов. Обязательно буду заказывать ещё.',
+    rating: 5,
+    product: 'Букет из пионов',
+  },
+  {
+    name: 'Мария Сидорова',
+    date: 'Неделю назад',
+    text: 'Заказываю здесь постоянно — и на праздники, и просто так. Качество всегда на высоте, цены адекватные. Бонусная система приятный плюс. Рекомендую!',
+    rating: 5,
+    product: 'Букет "Весенний микс"',
+  },
+  {
+    name: 'Екатерина Иванова',
+    date: '2 недели назад',
+    text: 'Заказала букет для подруги на юбилей. Отправили фото перед доставкой — всё как на картинке! Подруга была счастлива. Спасибо за отличный сервис!',
+    rating: 5,
+    product: 'Букет "Роскошь"',
+  },
+];
+
+// Интерфейс секции
+interface ProductSection {
+  title: string;
+  href: string;
+  products: Product[];
+  loading: boolean;
+}
+
 export default function HomePage() {
-  const [newProducts, setNewProducts] = useState<Product[]>([]);
-  const [saleProducts, setSaleProducts] = useState<Product[]>([]);
-  const [popularProducts, setPopularProducts] = useState<Product[]>([]);
   const [flowerMenuOpen, setFlowerMenuOpen] = useState(false);
   const [expandedFilter, setExpandedFilter] = useState<string | null>(null);
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+
+  // Секции с продуктами
+  const [sections, setSections] = useState<Record<string, ProductSection>>({
+    valentine: { title: 'Букеты на 14 февраля', href: '/catalog?occasion=valentine', products: [], loading: true },
+    classic: { title: 'Классические букеты', href: '/catalog?type=classic', products: [], loading: true },
+    author: { title: 'Авторские букеты', href: '/catalog?type=author', products: [], loading: true },
+    sale: { title: 'Распродажа', href: '/catalog?sale=true', products: [], loading: true },
+    roses: { title: 'Букеты роз', href: '/catalog?flower=roses', products: [], loading: true },
+    new: { title: 'Новинки', href: '/catalog?new=true', products: [], loading: true },
+    premium: { title: 'Премиум букеты', href: '/catalog?type=premium', products: [], loading: true },
+    popular: { title: 'Популярное', href: '/catalog?sort=popular', products: [], loading: true },
+  });
 
   useEffect(() => {
-    loadProducts();
+    loadAllSections();
   }, []);
 
-  const loadProducts = async () => {
-    // Новинки
-    const { data: newData } = await supabase
-      .from('products')
-      .select('*')
-      .eq('is_new', true)
-      .limit(4);
-    if (newData) setNewProducts(newData);
+  const loadAllSections = async () => {
+    // Загружаем все секции параллельно
+    const [valentineData, classicData, authorData, saleData, rosesData, newData, premiumData, popularData] = await Promise.all([
+      // 14 февраля - все букеты (в реальности фильтр по occasion)
+      supabase.from('products').select('*').limit(4),
+      // Классические
+      supabase.from('products').select('*').eq('bouquet_type', 'mixed').limit(4),
+      // Авторские
+      supabase.from('products').select('*').eq('bouquet_type', 'composition').limit(4),
+      // Распродажа
+      supabase.from('products').select('*').not('old_price', 'is', null).limit(4),
+      // Розы
+      supabase.from('products').select('*').eq('flower_type', 'roses').limit(4),
+      // Новинки
+      supabase.from('products').select('*').eq('is_new', true).limit(4),
+      // Премиум (дорогие)
+      supabase.from('products').select('*').gte('price', 5000).order('price', { ascending: false }).limit(4),
+      // Популярные
+      supabase.from('products').select('*').eq('is_popular', true).order('order_count', { ascending: false }).limit(4),
+    ]);
 
-    // Распродажа
-    const { data: saleData } = await supabase
-      .from('products')
-      .select('*')
-      .not('old_price', 'is', null)
-      .limit(4);
-    if (saleData) setSaleProducts(saleData);
+    setSections({
+      valentine: { ...sections.valentine, products: valentineData.data || [], loading: false },
+      classic: { ...sections.classic, products: classicData.data || [], loading: false },
+      author: { ...sections.author, products: authorData.data || [], loading: false },
+      sale: { ...sections.sale, products: saleData.data || [], loading: false },
+      roses: { ...sections.roses, products: rosesData.data || [], loading: false },
+      new: { ...sections.new, products: newData.data || [], loading: false },
+      premium: { ...sections.premium, products: premiumData.data || [], loading: false },
+      popular: { ...sections.popular, products: popularData.data || [], loading: false },
+    });
+  };
 
-    // Популярные
-    const { data: popularData } = await supabase
-      .from('products')
-      .select('*')
-      .limit(8);
-    if (popularData) setPopularProducts(popularData);
+  // Компонент секции с продуктами
+  const ProductSectionComponent = ({ sectionKey }: { sectionKey: string }) => {
+    const section = sections[sectionKey];
+    if (!section || (section.products.length === 0 && !section.loading)) return null;
+
+    return (
+      <section className="mb-16">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl md:text-4xl font-serif italic text-primary">
+            {section.title}
+          </h2>
+          <Link
+            href={section.href}
+            className="flex items-center gap-2 text-primary hover:text-primary/70 transition font-medium"
+          >
+            <span>Смотреть все</span>
+            <ChevronRight className="w-5 h-5" />
+          </Link>
+        </div>
+        {section.loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-white rounded-2xl h-80 animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            {section.products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
+      </section>
+    );
   };
 
   return (
@@ -223,7 +367,7 @@ export default function HomePage() {
                 href="/flowers"
                 className="flex items-center gap-3 bg-white border border-primary/10 text-primary p-4 rounded-2xl hover:bg-primary/5 hover:border-primary/20 transition group"
               >
-                <span className="text-2xl">🌸</span>
+                <Flower2 className="w-6 h-6 text-primary" />
                 <div>
                   <span className="font-medium block">Цветы поштучно</span>
                   <span className="text-xs text-primary/60">Розы, тюльпаны, пионы...</span>
@@ -252,14 +396,14 @@ export default function HomePage() {
 
               {/* Конструктор */}
               <Link href="/bouquet-builder" className="block bg-primary/5 border border-primary/10 text-primary p-5 rounded-2xl hover:bg-primary/10 transition">
-                <div className="text-2xl mb-2">✨</div>
+                <Flower2 className="w-8 h-8 mb-2 text-primary" />
                 <h3 className="text-lg font-serif italic mb-1">Конструктор букетов</h3>
                 <p className="text-sm text-primary/60">Создайте свой уникальный букет</p>
               </Link>
 
               {/* Квиз */}
               <Link href="/quiz" className="block bg-primary text-cream p-5 rounded-2xl text-center hover:opacity-90 transition">
-                <div className="text-2xl mb-2">🎯</div>
+                <Heart className="w-8 h-8 mx-auto mb-2" />
                 <h3 className="text-lg font-serif italic mb-1">Не знаете что выбрать?</h3>
                 <p className="text-sm text-cream/80">Пройдите квиз</p>
               </Link>
@@ -269,11 +413,11 @@ export default function HomePage() {
           {/* Main Content */}
           <main className="flex-1 relative z-0">
             {/* Hero */}
-            <section className="bg-primary/[0.03] rounded-3xl p-12 md:p-16 mb-12 text-center border border-primary-10">
+            <section className="bg-primary/[0.03] rounded-3xl p-12 md:p-16 mb-12 text-center border border-primary/10">
               <h1 className="text-5xl md:text-7xl font-serif italic text-primary mb-6">
                 La Flora Boutique
               </h1>
-              <p className="text-xl md:text-2xl text-primary-80 mb-8 max-w-2xl mx-auto">
+              <p className="text-xl md:text-2xl text-primary/80 mb-8 max-w-2xl mx-auto">
                 Изысканные букеты для особенных моментов
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
@@ -292,153 +436,179 @@ export default function HomePage() {
               </div>
             </section>
 
-            {/* Распродажа */}
-            {saleProducts.length > 0 && (
-              <section className="mb-16">
-                <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-4xl md:text-5xl font-serif italic text-primary">
-                    🔥 Распродажа
-                  </h2>
-                  <Link href="/catalog?sale=true" className="text-primary hover:opacity-70 transition">
-                    Смотреть все →
-                  </Link>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                  {saleProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Новинки */}
-            {newProducts.length > 0 && (
-              <section className="mb-16">
-                <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-4xl md:text-5xl font-serif italic text-primary">
-                    ✨ Новинки
-                  </h2>
-                  <Link href="/catalog?new=true" className="text-primary hover:opacity-70 transition">
-                    Смотреть все →
-                  </Link>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                  {newProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Популярные */}
-            {popularProducts.length > 0 && (
-              <section className="mb-16">
-                <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-4xl md:text-5xl font-serif italic text-primary">
-                    💎 Популярные букеты
-                  </h2>
-                  <Link href="/catalog" className="text-primary hover:opacity-70 transition">
-                    Смотреть все →
-                  </Link>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                  {popularProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
-              </section>
-            )}
+            {/* Секции продуктов */}
+            <ProductSectionComponent sectionKey="valentine" />
+            <ProductSectionComponent sectionKey="classic" />
+            <ProductSectionComponent sectionKey="author" />
+            <ProductSectionComponent sectionKey="sale" />
+            <ProductSectionComponent sectionKey="roses" />
+            <ProductSectionComponent sectionKey="new" />
+            <ProductSectionComponent sectionKey="premium" />
+            <ProductSectionComponent sectionKey="popular" />
 
             {/* Отзывы */}
             <section className="mb-16">
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-4xl md:text-5xl font-serif italic text-primary">
-                  💬 Отзывы клиентов
+                <h2 className="text-3xl md:text-4xl font-serif italic text-primary">
+                  Отзывы клиентов
                 </h2>
-                <Link href="/reviews" className="text-primary hover:opacity-70 transition">
-                  Все отзывы →
+                <Link
+                  href="/reviews"
+                  className="flex items-center gap-2 text-primary hover:text-primary/70 transition font-medium"
+                >
+                  <span>Все отзывы</span>
+                  <ChevronRight className="w-5 h-5" />
                 </Link>
               </div>
-              <div className="grid md:grid-cols-3 gap-6">
-                {[
-                  {
-                    name: 'Анна',
-                    text: 'Потрясающие букеты! Заказывала розы на день рождения, все было идеально. Свежие цветы, красивая упаковка.',
-                    rating: 5,
-                  },
-                  {
-                    name: 'Дмитрий',
-                    text: 'Быстрая доставка, вежливый курьер. Букет превзошел все ожидания! Жена была в восторге.',
-                    rating: 5,
-                  },
-                  {
-                    name: 'Мария',
-                    text: 'Заказываю здесь постоянно. Качество всегда на высоте, цены адекватные. Рекомендую!',
-                    rating: 5,
-                  },
-                ].map((review, i) => (
-                  <div key={i} className="bg-cream border border-primary-10 rounded-2xl p-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-12 h-12 bg-primary/[0.1] rounded-full flex items-center justify-center text-primary font-serif text-xl">
-                        {review.name[0]}
+              <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+                {REVIEWS_DATA.map((review, i) => (
+                  <div key={i} className="bg-white border border-primary/10 rounded-2xl p-6 hover:shadow-lg transition">
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary font-serif text-xl flex-shrink-0">
+                        {review.name.split(' ').map(n => n[0]).join('')}
                       </div>
-                      <div>
-                        <h4 className="font-medium text-primary">{review.name}</h4>
-                        <div className="text-yellow-500">{'⭐'.repeat(review.rating)}</div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-primary truncate">{review.name}</h4>
+                        <div className="flex items-center gap-2">
+                          <div className="flex">
+                            {[...Array(review.rating)].map((_, j) => (
+                              <Star key={j} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                            ))}
+                          </div>
+                          <span className="text-xs text-gray-400">{review.date}</span>
+                        </div>
                       </div>
                     </div>
-                    <p className="text-primary-80">{review.text}</p>
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-4">{review.text}</p>
+                    <p className="text-xs text-primary/60 truncate">{review.product}</p>
                   </div>
                 ))}
               </div>
             </section>
 
             {/* Преимущества */}
-            <section className="bg-primary/[0.03] rounded-3xl p-12 border border-primary-10">
-              <h2 className="text-4xl md:text-5xl font-serif italic text-primary mb-12 text-center">
+            <section className="bg-white rounded-3xl p-8 md:p-12 border border-primary/10 mb-16">
+              <h2 className="text-3xl md:text-4xl font-serif italic text-primary mb-10 text-center">
                 Почему выбирают нас
               </h2>
-              <div className="grid md:grid-cols-3 gap-8">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[
                   {
-                    icon: '🌸',
+                    icon: Flower2,
                     title: 'Свежие цветы',
-                    description: 'Только свежие букеты от проверенных поставщиков. Гарантия качества.',
+                    description: 'Только свежие букеты от проверенных поставщиков. Гарантия свежести 5 дней.',
                   },
                   {
-                    icon: '🚚',
+                    icon: Truck,
                     title: 'Быстрая доставка',
-                    description: 'Доставим в течение 2 часов по Москве. Точно в срок.',
+                    description: 'Доставим в течение 1-2 часов по Москве. Работаем с 10:00 до 23:00.',
                   },
                   {
-                    icon: '🎁',
+                    icon: Gift,
                     title: 'Бонусная программа',
-                    description: 'Копите бонусы с каждого заказа и получайте скидки.',
+                    description: 'Копите бонусы с каждого заказа и оплачивайте ими до 30% стоимости.',
                   },
                   {
-                    icon: '💳',
+                    icon: CreditCard,
                     title: 'Удобная оплата',
                     description: 'Онлайн, наличными или картой курьеру. Как вам удобно.',
                   },
                   {
-                    icon: '📸',
+                    icon: Camera,
                     title: 'Фото букета',
-                    description: 'Отправим фото букета перед доставкой по вашему желанию.',
+                    description: 'Отправим фото собранного букета перед доставкой бесплатно.',
                   },
                   {
-                    icon: '🎨',
-                    title: 'Индивидуальный подход',
-                    description: 'Создадим букет по вашим пожеланиям и бюджету.',
+                    icon: Shield,
+                    title: 'Гарантия качества',
+                    description: 'Заменим букет бесплатно, если он увянет в течение 48 часов.',
                   },
                 ].map((benefit, i) => (
-                  <div key={i} className="text-center">
-                    <div className="text-5xl mb-4">{benefit.icon}</div>
-                    <h3 className="text-xl font-serif italic text-primary mb-3">
-                      {benefit.title}
-                    </h3>
-                    <p className="text-primary-80">{benefit.description}</p>
+                  <div key={i} className="flex gap-4">
+                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <benefit.icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-medium text-primary mb-2">
+                        {benefit.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm">{benefit.description}</p>
+                    </div>
                   </div>
                 ))}
+              </div>
+            </section>
+
+            {/* FAQ */}
+            <section className="mb-16">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-3xl md:text-4xl font-serif italic text-primary">
+                  Вопросы и ответы
+                </h2>
+                <Link
+                  href="/faq"
+                  className="flex items-center gap-2 text-primary hover:text-primary/70 transition font-medium"
+                >
+                  <span>Все вопросы</span>
+                  <ChevronRight className="w-5 h-5" />
+                </Link>
+              </div>
+              <div className="space-y-4">
+                {FAQ_DATA.map((faq, i) => (
+                  <div
+                    key={i}
+                    className="bg-white border border-primary/10 rounded-2xl overflow-hidden"
+                  >
+                    <button
+                      onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
+                      className="w-full flex items-center justify-between p-6 text-left hover:bg-primary/5 transition"
+                    >
+                      <span className="font-medium text-primary pr-4">{faq.question}</span>
+                      <ChevronDown className={`w-5 h-5 text-primary flex-shrink-0 transition-transform ${expandedFaq === i ? 'rotate-180' : ''}`} />
+                    </button>
+                    <div className={`overflow-hidden transition-all duration-300 ${expandedFaq === i ? 'max-h-96' : 'max-h-0'}`}>
+                      <p className="px-6 pb-6 text-gray-600">{faq.answer}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Контакты */}
+            <section className="bg-primary/[0.03] rounded-3xl p-8 md:p-12 border border-primary/10">
+              <h2 className="text-3xl md:text-4xl font-serif italic text-primary mb-8 text-center">
+                Свяжитесь с нами
+              </h2>
+              <div className="grid md:grid-cols-3 gap-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Телефон</p>
+                    <a href="tel:+79001234567" className="text-lg font-medium text-primary hover:underline">
+                      +7 (900) 123-45-67
+                    </a>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Clock className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Время работы</p>
+                    <p className="text-lg font-medium text-primary">10:00 - 23:00</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Адрес</p>
+                    <p className="text-lg font-medium text-primary">Москва, Цветочная 1</p>
+                  </div>
+                </div>
               </div>
             </section>
           </main>
@@ -450,10 +620,12 @@ export default function HomePage() {
         href="https://t.me/your_telegram"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-8 right-8 bg-primary text-cream w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:opacity-80 transition text-2xl z-50"
+        className="fixed bottom-8 right-8 bg-primary text-cream w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:opacity-80 transition z-50"
         title="Написать в Telegram"
       >
-        ✈️
+        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+        </svg>
       </a>
     </div>
   );
