@@ -26,6 +26,7 @@ import {
   CreditCard,
   Calendar,
   MapPin,
+  type LucideIcon,
 } from 'lucide-react';
 import { useStore } from '@/lib/store';
 import { supabase } from '@/lib/supabase';
@@ -52,7 +53,7 @@ interface BonusTransaction {
   balance_after?: number;
 }
 
-const statusConfig: Record<string, { label: string; color: string; bgColor: string; icon: React.ElementType }> = {
+const statusConfig: Record<string, { label: string; color: string; bgColor: string; icon: LucideIcon }> = {
   pending: { label: 'Ожидает', color: 'text-yellow-400', bgColor: 'bg-yellow-500/10', icon: Clock },
   confirmed: { label: 'Подтверждён', color: 'text-blue-400', bgColor: 'bg-blue-500/10', icon: CheckCircle },
   preparing: { label: 'Готовится', color: 'text-purple-400', bgColor: 'bg-purple-500/10', icon: Package },

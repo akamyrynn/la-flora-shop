@@ -1,11 +1,11 @@
 'use client';
 
-import { X } from 'lucide-react';
+import { X, type LucideIcon } from 'lucide-react';
 
 export interface BulkAction {
   key: string;
   label: string;
-  icon?: React.ElementType;
+  icon?: LucideIcon;
   variant?: 'default' | 'danger';
   onClick: () => void;
 }

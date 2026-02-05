@@ -30,14 +30,15 @@ import {
   Menu,
   X,
   Flower2,
+  type LucideIcon,
 } from 'lucide-react';
 
 interface MenuItem {
   name: string;
   href?: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   badge?: number;
-  children?: { name: string; href: string; icon?: React.ElementType }[];
+  children?: { name: string; href: string; icon?: LucideIcon }[];
 }
 
 const menuItems: MenuItem[] = [
