@@ -59,6 +59,7 @@ export interface User {
   full_name?: string;
   bonus_card?: string;
   bonus_balance: number;
+  role?: 'customer' | 'admin' | 'manager' | 'cashier';
 }
 
 export interface Order {
@@ -390,6 +391,39 @@ export interface POSTransaction {
 // ============================================
 // КОНСТРУКТОР БУКЕТОВ
 // ============================================
+
+// ============================================
+// ПОШТУЧНЫЕ ЦВЕТЫ
+// ============================================
+
+export interface SingleFlower {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  price: number;
+  color: string;
+  available_colors: string[];
+  stem_length?: string;
+  image?: string;
+  in_stock: boolean;
+  stock_quantity: number;
+  min_quantity: number;
+  max_quantity: number;
+  is_seasonal: boolean;
+  season_start?: number;
+  season_end?: number;
+  is_popular: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CartSingleFlower {
+  flower: SingleFlower;
+  quantity: number;
+  selectedColor: string;
+}
 
 export type FlowerComponentType = 'flower' | 'greenery' | 'filler';
 export type PackagingOptionType = 'ribbon' | 'paper' | 'box' | 'basket' | 'hat_box';

@@ -51,6 +51,7 @@ const menuItems: MenuItem[] = [
     icon: Package,
     children: [
       { name: 'Букеты', href: '/admin/products', icon: Flower2 },
+      { name: 'Поштучно', href: '/admin/flowers', icon: Flower2 },
       { name: 'Дополнения', href: '/admin/addons', icon: Gift },
       { name: 'Коллекции', href: '/admin/collections', icon: Layers },
       { name: 'Импорт/Экспорт', href: '/admin/import-export', icon: FileDown },

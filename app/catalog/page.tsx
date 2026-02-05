@@ -16,7 +16,7 @@ export default function CatalogPage() {
 
   const loadProducts = async (filters?: any) => {
     setLoading(true);
-    let query = supabase.from('products').select('*').eq('in_stock', true);
+    let query = supabase.from('products').select('*');
 
     if (filters?.bouquetType) {
       query = query.eq('bouquet_type', filters.bouquetType);
@@ -46,7 +46,8 @@ export default function CatalogPage() {
     } else if (filters?.sortBy === 'new') {
       query = query.order('created_at', { ascending: false });
     } else {
-      query = query.eq('is_popular', true).order('order_count', { ascending: false });
+      // По умолчанию показываем все товары, сортировка по дате
+      query = query.order('created_at', { ascending: false });
     }
 
     const { data } = await query;

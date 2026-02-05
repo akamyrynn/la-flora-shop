@@ -88,7 +88,7 @@ export async function calculateBonuses(
 export async function getUserBonusBalance(userId: string): Promise<number> {
   const { data, error } = await supabase
     .from('profiles')
-    .select('internal_bonus_balance')
+    .select('bonus_balance')
     .eq('id', userId)
     .single();
 
@@ -97,7 +97,7 @@ export async function getUserBonusBalance(userId: string): Promise<number> {
     return 0;
   }
 
-  return data?.internal_bonus_balance || 0;
+  return data?.bonus_balance || 0;
 }
 
 export async function createBonusTransaction(
@@ -144,7 +144,7 @@ export async function createBonusTransaction(
 
   const { error: updateError } = await supabase
     .from('profiles')
-    .update({ internal_bonus_balance: newBalance })
+    .update({ bonus_balance: newBalance })
     .eq('id', userId);
 
   if (updateError) {
